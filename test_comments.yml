@@ -1,0 +1,5 @@
+# this should not cause an error regardless if that env
+# exists or not
+# old_thing: ${{ ENV:SOMETHING }}
+
+title: ${{ 0 }}

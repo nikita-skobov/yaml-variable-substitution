@@ -169,6 +169,7 @@ pub fn read_yaml_from_file(
 mod tests {
     use super::*;
     const TEST_FILE: &str = "test.yml";
+    const TEST_COMMENTS_FILE: &str = "test_comments.yml";
     // not a very thorough test suite, but im not 100% sure
     // of how i want this lib to work, so i just provide one
     // test of the most basic functionality so that i dont
@@ -199,5 +200,13 @@ mod tests {
             my_yaml_doc["segments"][3].as_str().unwrap(),
             "default if arg not provided"
         );
+    }
+
+    #[test]
+    #[ignore = "not implemented yet... need to not try to substitute commented variables"]
+    fn variables_in_comments_dont_cause_errors() {
+        let cli_arg_context = vec!["some_arg".into()];
+        let my_yaml_docs = read_yaml_from_file(TEST_COMMENTS_FILE, cli_arg_context).unwrap();
+        let my_yaml_doc = &my_yaml_docs[0];
     }
 }
