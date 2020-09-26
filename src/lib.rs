@@ -99,7 +99,7 @@ impl<'a> Context for ArgEnvContext<'a> {
     }
 }
 
-pub fn read_yaml_from_str(
+pub fn load_yaml_from_str(
     yaml_str: &str,
 ) -> Result<Vec<Yaml>, Error> {
     let yaml_doc = match YamlLoader::load_from_str(&yaml_str) {
@@ -119,27 +119,26 @@ pub fn read_yaml_from_str(
     Ok(yaml_doc)
 }
 
-pub fn read_yaml_from_file(
-    file_path: &str,
+// given a yaml text as a string, perform substitutions
+// first via the cli and environemnt variables context
+// and then again with the context of the yaml object
+// this second pass allows yaml fields to reference each other
+pub fn read_yaml_string_from_string(
+    yaml_str: &str,
     cli_args: Vec<String>,
-) -> Result<Vec<Yaml>, Error> {
+) -> Result<String, Error> {
     let arg_and_env_context = ArgEnvContext {
         cli_args: &cli_args,
     };
-
-    let mut file = File::open(file_path)?;
-    let mut yaml_str = String::new();
-    file.read_to_string(&mut yaml_str)?;
-
     // first pass:
     // we give it the context of the cli args, and env vars
     // and ignore all else. We fill in the dynamic vars here
-    yaml_str = replace_all_from(
+    let mut yaml_out_str = replace_all_from(
         &yaml_str,
         &arg_and_env_context,
         FailureMode::FM_ignore,
     );
-    let yaml_doc = read_yaml_from_str(&yaml_str)?;
+    let yaml_doc = load_yaml_from_str(&yaml_out_str)?;
     // and after that, we create a temporary, dummy, yaml context
     // to be used to fill in the rest of the variable references
     // using the filled in context from the envs and args above
@@ -152,16 +151,42 @@ pub fn read_yaml_from_file(
     };
     // this time we panic if we fail to find the variable the
     // user is looking for
-    yaml_str = replace_all_from(
-        &yaml_str,
+    yaml_out_str = replace_all_from(
+        &yaml_out_str,
         &yaml_context,
         FailureMode::FM_panic,
     );
     println!("YAML AFTER:");
-    println!("{}", yaml_str);
-    let yaml_doc = read_yaml_from_str(&yaml_str)?;
+    println!("{}", yaml_out_str);
+    Ok(yaml_out_str)
+}
 
+// given a path to a file (and cli args for context)
+// return a yaml object with variables substituted according
+// to the cli, env, and other yaml variable context
+pub fn read_yaml_from_file(
+    file_path: &str,
+    cli_args: Vec<String>,
+) -> Result<Vec<Yaml>, Error> {
+    let mut file = File::open(file_path)?;
+    let mut yaml_str = String::new();
+    file.read_to_string(&mut yaml_str)?;
+    let yaml_str = read_yaml_string_from_string(yaml_str.as_str(), cli_args)?;
+    let yaml_doc = load_yaml_from_str(&yaml_str)?;
     Ok(yaml_doc)
+}
+
+// same as read_yaml_from_file, but instead of returning the
+// yaml rust object, return just the final string with all the
+// variables substituted
+pub fn read_yaml_string_from_file(
+    file_path: &str,
+    cli_args: Vec<String>,
+) -> Result<String, Error> {
+    let mut file = File::open(file_path)?;
+    let mut yaml_str = String::new();
+    file.read_to_string(&mut yaml_str)?;
+    read_yaml_string_from_string(yaml_str.as_str(), cli_args)
 }
 
 
