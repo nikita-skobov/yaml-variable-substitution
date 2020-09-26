@@ -1,0 +1,21 @@
+# please dont edit this file
+# a test suite depends on it!
+
+title: hello ${{ ENV:TITLE }} world
+
+custom:
+  some_setting: ${{ 2 | default if arg not provided }}
+  other_setting: ${{ 1 }}
+
+something:
+  is:
+    here: ${{ segments.1 }}
+    and: "also here: ${{ 0 }}"
+
+
+
+segments:
+  - a
+  - b
+  - c
+  - ${{ custom.some_setting }}

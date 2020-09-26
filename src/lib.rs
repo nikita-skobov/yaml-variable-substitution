@@ -163,3 +163,41 @@ pub fn read_yaml_from_file(
 
     Ok(yaml_doc)
 }
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    const TEST_FILE: &str = "test.yml";
+    // not a very thorough test suite, but im not 100% sure
+    // of how i want this lib to work, so i just provide one
+    // test of the most basic functionality so that i dont
+    // accidentally break this in the future:
+    #[test]
+    fn works() {
+        std::env::set_var("TITLE", "BEAUTIFUL");
+        let cli_arg_context = vec!["some_arg".into(), "other_arg".into()];
+        let my_yaml_docs = read_yaml_from_file(TEST_FILE, cli_arg_context).unwrap();
+        let my_yaml_doc = &my_yaml_docs[0];
+        // test that we can reference other variables in the yaml
+        assert_eq!(
+            my_yaml_doc["something"]["is"]["here"].as_str().unwrap(),
+            "b"
+        );
+        // test that we can reference cli args via their position
+        assert_eq!(
+            my_yaml_doc["something"]["is"]["and"].as_str().unwrap(),
+            "also here: some_arg"
+        );
+        // test that we can reference environment variables
+        assert_eq!(
+            my_yaml_doc["title"].as_str().unwrap(),
+            "hello BEAUTIFUL world"
+        );
+        // test that defaults work
+        assert_eq!(
+            my_yaml_doc["segments"][3].as_str().unwrap(),
+            "default if arg not provided"
+        );
+    }
+}
