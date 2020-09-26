@@ -60,7 +60,6 @@ pub struct YamlContext<'a> {
 }
 impl<'a> Context for YamlContext<'a> {
     fn get_value_from_key(&self, key: &str) -> Option<String> {
-        // println!("TRYING TO GET VALUE FOR: {}", key);
         let key_split = key.split(".");
         let mut yobj = self.yaml;
         for k in key_split {
@@ -156,8 +155,6 @@ pub fn read_yaml_string_from_string(
         &yaml_context,
         FailureMode::FM_panic,
     );
-    println!("YAML AFTER:");
-    println!("{}", yaml_out_str);
     Ok(yaml_out_str)
 }
 
@@ -225,6 +222,18 @@ mod tests {
             my_yaml_doc["segments"][3].as_str().unwrap(),
             "default if arg not provided"
         );
+    }
+
+    #[test]
+    fn getting_doc_as_string_works() {
+        std::env::set_var("TITLE", "BEAUTIFUL");
+        let cli_arg_context = vec!["some_arg".into(), "other_arg".into()];
+        let my_yaml_string = read_yaml_string_from_file(TEST_FILE, cli_arg_context).unwrap();
+
+        assert!(my_yaml_string.contains("title: hello BEAUTIFUL world"));
+        assert!(my_yaml_string.contains("and: \"also here: some_arg\""));
+        assert!(my_yaml_string.contains("here: b"));
+        assert!(my_yaml_string.contains("some_setting: default if arg not provided"));
     }
 
     #[test]
