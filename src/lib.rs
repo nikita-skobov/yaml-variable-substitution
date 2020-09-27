@@ -56,7 +56,7 @@ pub fn get_string_from_yaml_object(yaml_obj: &Yaml) -> Option<String> {
 
 
 pub struct YamlContext<'a> {
-    yaml: &'a Yaml,
+    pub yaml: &'a Yaml,
 }
 impl<'a> Context for YamlContext<'a> {
     fn get_value_from_key(&self, key: &str) -> Option<String> {
