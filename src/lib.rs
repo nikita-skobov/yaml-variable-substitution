@@ -59,7 +59,7 @@ pub struct YamlContext<'a> {
     pub yaml: &'a Yaml,
 }
 impl<'a> Context for YamlContext<'a> {
-    fn get_value_from_key(&self, key: &str) -> Option<String> {
+    fn get_value_from_key(&self, key: &str, syntax_char: char) -> Option<String> {
         let key_split = key.split(".");
         let mut yobj = self.yaml;
         for k in key_split {
@@ -84,7 +84,7 @@ pub struct ArgEnvContext<'a> {
     cli_args: &'a Vec<String>,
 }
 impl<'a> Context for ArgEnvContext<'a> {
-    fn get_value_from_key(&self, key: &str) -> Option<String> {
+    fn get_value_from_key(&self, key: &str, syntax_char: char) -> Option<String> {
         if key.starts_with("ENV:") {
             // we pass a slice to not pass the actual
             // 'ENV:' prefix
@@ -93,7 +93,7 @@ impl<'a> Context for ArgEnvContext<'a> {
         } else {
             // otherwise, try to use the cli args to get
             // an argument via index
-            self.cli_args.get_value_from_key(key)
+            self.cli_args.get_value_from_key(key, syntax_char)
         }
     }
 }
