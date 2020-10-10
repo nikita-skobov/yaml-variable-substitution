@@ -136,6 +136,7 @@ pub fn read_yaml_string_from_string(
         &yaml_str,
         &arg_and_env_context,
         FailureMode::FM_ignore,
+        None,
     );
     let yaml_doc = load_yaml_from_str(&yaml_out_str)?;
     // and after that, we create a temporary, dummy, yaml context
@@ -154,6 +155,7 @@ pub fn read_yaml_string_from_string(
         &yaml_out_str,
         &yaml_context,
         FailureMode::FM_panic,
+        None,
     );
     Ok(yaml_out_str)
 }
