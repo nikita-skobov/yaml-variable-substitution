@@ -59,7 +59,7 @@ pub struct YamlContext<'a> {
     pub yaml: &'a Yaml,
 }
 impl<'a> Context for YamlContext<'a> {
-    fn get_value_from_key(&self, key: &str, syntax_char: char) -> Option<String> {
+    fn get_value_from_key(&self, key: &str, _syntax_char: char) -> Option<String> {
         let key_split = key.split(".");
         let mut yobj = self.yaml;
         for k in key_split {
@@ -243,6 +243,6 @@ mod tests {
     fn variables_in_comments_dont_cause_errors() {
         let cli_arg_context = vec!["some_arg".into()];
         let my_yaml_docs = read_yaml_from_file(TEST_COMMENTS_FILE, cli_arg_context).unwrap();
-        let my_yaml_doc = &my_yaml_docs[0];
+        let _ = &my_yaml_docs[0];
     }
 }
