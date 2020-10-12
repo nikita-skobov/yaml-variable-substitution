@@ -1,0 +1,9 @@
+[package]
+name = "yaml_variable_substitution"
+version = "1.0.0"
+authors = ["nikita-skobov"]
+edition = "2018"
+
+[dependencies]
+context_based_variable_substitution = { git = "https://github.com/nikita-skobov/context-based-variable-substitution" }
+yaml-rust = "0.4"
