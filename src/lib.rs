@@ -118,10 +118,10 @@ pub fn load_yaml_from_str(
     Ok(yaml_doc)
 }
 
-// given a yaml text as a string, perform substitutions
-// first via the cli and environemnt variables context
-// and then again with the context of the yaml object
-// this second pass allows yaml fields to reference each other
+/// given a yaml text as a string, perform substitutions
+/// first via the cli and environemnt variables context
+/// and then again with the context of the yaml object
+/// this second pass allows yaml fields to reference each other
 pub fn read_yaml_string_from_string(
     yaml_str: &str,
     cli_args: Vec<String>,
@@ -160,9 +160,9 @@ pub fn read_yaml_string_from_string(
     Ok(yaml_out_str)
 }
 
-// given a path to a file (and cli args for context)
-// return a yaml object with variables substituted according
-// to the cli, env, and other yaml variable context
+/// given a path to a file (and cli args for context)
+/// return a yaml object with variables substituted according
+/// to the cli, env, and other yaml variable context
 pub fn read_yaml_from_file(
     file_path: &str,
     cli_args: Vec<String>,
@@ -175,9 +175,9 @@ pub fn read_yaml_from_file(
     Ok(yaml_doc)
 }
 
-// same as read_yaml_from_file, but instead of returning the
-// yaml rust object, return just the final string with all the
-// variables substituted
+/// same as read_yaml_from_file, but instead of returning the
+/// yaml rust object, return just the final string with all the
+/// variables substituted
 pub fn read_yaml_string_from_file(
     file_path: &str,
     cli_args: Vec<String>,
